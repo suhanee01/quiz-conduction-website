@@ -71,6 +71,7 @@
         <button id="submit-answer-btn" class="btn">Submit Answer</button>
     </div>
 </div>
+
 <script>
     let quiz = [];
     let currentQuestion = 0;
@@ -83,6 +84,7 @@
         document.getElementById('create-quiz-btn').style.display = 'none';
         document.getElementById('quiz').style.display = 'none';
     });
+
     document.getElementById('add-question-btn').addEventListener('click', () => {
         const question = prompt('Enter the question:');
         const options = prompt('Enter options separated by comma:').split(',');
@@ -90,11 +92,13 @@
         quiz.push({ question, options, answer });
         document.getElementById('question-container').innerHTML += `<p>Question ${quiz.length}: ${question}</p>`;
     });
+
     document.getElementById('submit-quiz-btn').addEventListener('click', () => {
         document.getElementById('quiz-creation').style.display = 'none';
         document.getElementById('quiz').style.display = 'block';
         displayQuestion();
     });
+
     function displayQuestion() {
         const current = quiz[currentQuestion];
         document.getElementById('question').textContent = current.question;
@@ -138,7 +142,7 @@
     }
 
     function displayScore() {
-        document.getElementById('quiz').innerHTML = '<h2>Quiz Completed</h2><p>Your score is: ${score}/${quiz.length}</p>'
+        document.getElementById('quiz').innerHTML = `<h2>Quiz Completed</h2><p>Your score is: ${score}/${quiz.length}</p>`;
     }
 
     document.getElementById('submit-answer-btn').addEventListener('click', () => {
