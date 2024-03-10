@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Website</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .quiz {
+        display: none;
+    }
+    .question {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .options {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .option {
+        margin: 5px;
+        padding: 10px 20px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .option:hover {
+        background-color: #c0c0c0;
+    }
+    .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Quiz Website</h1>
+    <button id="create-quiz-btn" class="btn">Create Quiz</button>
+    <div id="quiz-creation" style="display:none;">
+        <h2>Create Quiz</h2>
+        <div id="question-container"></div>
+        <button id="add-question-btn" class="btn">Add Question</button>
+        <button id="submit-quiz-btn" class="btn">Submit Quiz</button>
+    </div>
+    <div id="quiz" class="quiz">
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+        <div id="timer">Timer: <span id="time-left">10</span> seconds</div>
+        <button id="submit-answer-btn" class="btn">Submit Answer</button>
+    </div>
+</div>
+<script>
+    let quiz = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let timeLeft = 10;
+    let timerInterval;
+
+    document.getElementById('create-quiz-btn').addEventListener('click', () => {
+        document.getElementById('quiz-creation').style.display = 'block';
+        document.getElementById('create-quiz-btn').style.display = 'none';
+        document.getElementById('quiz').style.display = 'none';
+    });
+    document.getElementById('add-question-btn').addEventListener('click', () => {
+        const question = prompt('Enter the question:');
+        const options = prompt('Enter options separated by comma:').split(',');
+        const answer = prompt('Enter the correct answer:');
+        quiz.push({ question, options, answer });
+        document.getElementById('question-container').innerHTML += `<p>Question ${quiz.length}: ${question}</p>`;
+    });
+    document.getElementById('submit-quiz-btn').addEventListener('click', () => {
+        document.getElementById('quiz-creation').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        displayQuestion();
+    });
+    function displayQuestion() {
+        const current = quiz[currentQuestion];
+        document.getElementById('question').textContent = current.question;
+        const optionsElement = document.getElementById('options');
+        optionsElement.innerHTML = '';
+        current.options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.classList.add('option');
+            button.addEventListener('click', () => checkAnswer(option));
+            optionsElement.appendChild(button);
+        });
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 10;
+        document.getElementById('time-left').textContent = timeLeft;
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('time-left').textContent = timeLeft;
+            if (timeLeft === 0) {
+                clearInterval(timerInterval);
+                checkAnswer(null);
+            }
+        }, 1000);
+    }
+
+    function checkAnswer(selectedOption) {
+        clearInterval(timerInterval);
+        if (selectedOption === quiz[currentQuestion].answer) {
+            score++;
+        }
+        currentQuestion++;
+        if (currentQuestion < quiz.length) {
+            displayQuestion();
+        } else {
+            displayScore();
+        }
+    }
+
+    function displayScore() {
+        document.getElementById('quiz').innerHTML = '<h2>Quiz Completed</h2><p>Your score is: ${score}/${quiz.length}</p>'
+    }
+
+    document.getElementById('submit-answer-btn').addEventListener('click', () => {
+        const selectedOption = document.querySelector('.option.selected');
+        if (selectedOption) {
+            checkAnswer(selectedOption.textContent);
+        } else {
+            alert('Please select an option.');
+        }
+    });
+
+    document.getElementById('options').addEventListener('click', (e) => {
+        const options = document.querySelectorAll('.option');
+        options.forEach(option => option.classList.remove('selected'));
+        if (e.target.classList.contains('option')) {
+            e.target.classList.add('selected');
+        }
+    });
+</script>
+</body>
+</html>
